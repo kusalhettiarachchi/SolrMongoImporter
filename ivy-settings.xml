@@ -3,7 +3,7 @@
     <settings defaultResolver="custom-chain"/>
     <resolvers>
         <chain name="custom-chain">
-            <ibiblio name="restlet" m2compatible="true" root="http://maven.restlet.com"/>
+            <ibiblio name="restlet" m2compatible="true" root="https://maven.restlet.com"/>
             <ibiblio name="central" m2compatible="true"/>
         </chain>
     </resolvers>

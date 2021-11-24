@@ -2,14 +2,18 @@ package org.apache.solr.handler.dataimport;
 
 
 import com.mongodb.*;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.mongodb.client.model.Filters.*;
+
 import java.net.UnknownHostException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.*;
 
 import static org.apache.solr.handler.dataimport.DataImportHandlerException.SEVERE;
@@ -69,7 +73,21 @@ public class MongoDataSource extends DataSource<Iterator<Map<String, Object>>> {
     @Override
     public Iterator<Map<String, Object>> getData(String query) {
 
-        DBObject queryObject = (DBObject) JSON.parse(query);
+        /* If querying by _id, since the id is a string now,
+         * it has to be converted back to type ObjectId() using the
+         * constructor
+         */
+        DBObject queryObject = new BasicDBObject();
+        if(query.contains("_id")){
+            @SuppressWarnings("unchecked")
+            Map<String, String> queryWithId = (Map<String, String>) JSON.parse(query);
+            String id = queryWithId.get("_id");
+            queryObject = new BasicDBObject("_id", new ObjectId(id));
+        }
+        else{
+            queryObject = (DBObject) JSON.parse(query);
+        }
+
         LOG.debug("Executing MongoQuery: " + query.toString());
 
         long start = System.currentTimeMillis();

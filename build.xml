@@ -46,7 +46,8 @@
         <ivy:cachepath pathid="compile.path" conf="compile"/>
     </target>
 
-    <target name="init" depends="ivy-init, clean">
+<!--    <target name="init" depends="ivy-init, clean">-->
+    <target name="init" depends="clean">
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${jar.dir}"/>
         <mkdir dir="${classes.dir}"/>
@@ -71,7 +72,7 @@
 
     <target name="ivy-download" unless="offline">
         <mkdir dir="${ivy.jar.dir}"/>
-        <get src="http://repo2.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+        <get src="https://repo2.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
              dest="${ivy.jar.file}" usetimestamp="true"/>
     </target>
 
