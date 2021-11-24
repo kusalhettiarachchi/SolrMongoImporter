@@ -10,23 +10,33 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 public class MongoMapperTransformer extends Transformer {
+    //To identify the created_at field
+    public static final String TIMESTAMP = "timestamp";
     @Override
     public Object transformRow(Map<String, Object> row, Context context) {
 
         for (Map<String, String> map : context.getAllEntityFields()) {
             String mongoFieldName = map.get(MONGO_FIELD);
             String mongoId = map.get(MONGO_ID);
+            String timestamp = map.get(TIMESTAMP);
             if (mongoFieldName == null)
                 continue;
 
             String columnFieldName = map.get(DataImporter.COLUMN);
 
             //If the field is ObjectId convert it into String
-            if (mongoId != null && Boolean.parseBoolean(mongoId)) {
+            if (Boolean.parseBoolean(mongoId)) {
                 Object srcId = row.get(columnFieldName);
                 row.put(columnFieldName, srcId.toString());
             }
-            else{
+            //If the field is Timestamp convert it into parsable format
+            else if (Boolean.parseBoolean(timestamp)) {
+                String ts = row.get(columnFieldName).toString();
+                if (ts.contains("+")) {
+                    ts = ts.split("\\+")[0] + 'Z';
+                }
+                row.put(columnFieldName, ts);
+            } else {
                 row.put(columnFieldName, row.get(mongoFieldName));
             }
         }
